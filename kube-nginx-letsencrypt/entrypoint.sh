@@ -62,8 +62,8 @@ echo "Done"
 if [[ -z $ROUTE ]]; then
   echo "Not creating route patch."
 else
-  cat ${CERTPATH}/fullchain.pem | tr '\n' % | sed 's@%@\\n@g' > /tmp/full.pem
-  cat ${CERTPATH}/privkey.pem | tr '\n' % | sed 's@%@\\n@g' > /tmp/key.pem
+  cat ${CERTPATH}/fullchain.pem | tr '\n' % | sed 's@%@\\\\n@g' > /tmp/full.pem
+  cat ${CERTPATH}/privkey.pem | tr '\n' % | sed 's@%@\\\\n@g' > /tmp/key.pem
   echo "Creating route patch"
   cat /route-patch-template.json | \
 	sed "s/NAMESPACE/${NAMESPACE}/" | \
