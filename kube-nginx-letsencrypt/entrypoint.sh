@@ -38,10 +38,10 @@ cat /secret-patch-template.json | \
 	sed "s/NAME/${SECRET}/" | \
 	sed "s/TLSCERT/$(cat ${CERTPATH}/fullchain.pem | base64 | tr -d '\n')/" | \
 	sed "s/TLSKEY/$(cat ${CERTPATH}/privkey.pem |  base64 | tr -d '\n')/" \
-	> /secret-patch.json
+	> /tmp/secret-patch.json
 
 echo "Checking json file exists. Exiting if not found..."
-ls /secret-patch.json || exit 1
+ls /tmp/secret-patch.json || exit 1
 
 # Update Secret
 echo "Updating secret..."
@@ -51,6 +51,6 @@ curl \
   -XPATCH \
   -H "Accept: application/json, */*" \
   -H "Content-Type: application/strategic-merge-patch+json" \
-  -d @/secret-patch.json https://kubernetes/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET} \
+  -d @/tmp/secret-patch.json https://kubernetes/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET} \
   -k -v
 echo "Done"
