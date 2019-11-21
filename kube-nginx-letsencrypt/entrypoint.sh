@@ -15,11 +15,13 @@ NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 echo "Current Kubernetes namespce: $NAMESPACE"
 
 echo "Starting HTTP server..."
-python3 -m http.server 8080 &
-PID=$!
+WEBROOT=/tmp/challenge
+mkdir -p /tmp/challenge
+(cd /tmp/challenge && python3 -m http.server 8080) &
+PID=$(pidof python3)
 
 echo "Starting certbot..."
-certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
+certbot certonly --webroot -w $WEBROOT -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
   --config-dir=/tmp/cfg --logs-dir=/tmp/log --work-dir=/tmp/work
 kill $PID
 
