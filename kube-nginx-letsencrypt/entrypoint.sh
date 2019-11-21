@@ -15,14 +15,16 @@ echo " ROUTE: $ROUTE"
 NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 echo "Current Kubernetes namespce: $NAMESPACE"
 
-echo "Starting HTTP server..."
+echo "Starting HTTP server... "
 WEBROOT=/tmp/challenge
 mkdir -p /tmp/challenge
 (cd /tmp/challenge && python3 -m http.server 8080) &
 PID=$(pidof python3)
 
+echo "Wait a little so that service will see us"
+sleep 20
+
 # use staging
-TESTCERT=--test-cert
 echo "Starting certbot..."
 certbot certonly $TESTCERT --webroot -w $WEBROOT -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
   --config-dir=/tmp/cfg --logs-dir=/tmp/log --work-dir=/tmp/work
@@ -31,7 +33,6 @@ kill $PID
 echo "Certbot finished. Killing http server..."
 
 echo "Finiding certs. Exiting if certs are not found ..."
-# CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
 CERTPATH=/tmp/cfg/live/$(echo $DOMAINS | cut -f1 -d',')
 ls $CERTPATH || exit 1
 
