@@ -20,8 +20,10 @@ mkdir -p /tmp/challenge
 (cd /tmp/challenge && python3 -m http.server 8080) &
 PID=$(pidof python3)
 
+# use staging
+TESTCERT=--test-cert
 echo "Starting certbot..."
-certbot certonly --webroot -w $WEBROOT -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
+certbot certonly $TESTCERT --webroot -w $WEBROOT -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
   --config-dir=/tmp/cfg --logs-dir=/tmp/log --work-dir=/tmp/work
 kill $PID
 
