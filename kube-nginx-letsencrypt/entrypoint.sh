@@ -78,7 +78,7 @@ else
     -XPATCH \
     -H "Accept: application/json, */*" \
     -H "Content-Type: application/strategic-merge-patch+json" \
-    -d @/tmp/route-patch.json https://$APISERVER/api/v1/namespaces/${NAMESPACE}/routes/${ROUTE} \
+    -d @/tmp/route-patch.json https://$APISERVER/apis/route.openshift.io/v1/namespaces/${NAMESPACE}/routes/${ROUTE} \
     -k -v
 fi
 
