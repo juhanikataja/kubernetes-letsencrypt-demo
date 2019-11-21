@@ -9,6 +9,7 @@ echo "Inputs:"
 echo " EMAIL: $EMAIL"
 echo " DOMAINS: $DOMAINS"
 echo " SECRET: $SECRET"
+echo " ROUTE: $ROUTE"
 
 
 NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
@@ -56,3 +57,27 @@ curl \
   -d @/tmp/secret-patch.json https://$APISERVER/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET} \
   -k -v
 echo "Done"
+
+# Update route
+if [[ -z $ROUTE ]]; then
+
+  echo "Creating route patch"
+  cat /route-patch-template.json | \
+	sed "s/NAMESPACE/${NAMESPACE}/" | \
+	sed "s/NAME/${SECRET}/" | \
+        sed "s/ROUTENAME/${ROUTE}/" | \
+	sed "s/TLSCERT/$(cat ${CERTPATH}/fullchain.pem)/" | \
+	sed "s/TLSKEY/$(cat ${CERTPATH}/privkey.pem)/" \
+	> /tmp/route-patch.json
+
+  echo "Updating route..."
+  curl \
+    --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+    -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+    -XPATCH \
+    -H "Accept: application/json, */*" \
+    -H "Content-Type: application/strategic-merge-patch+json" \
+    -d @/tmp/route-patch.json https://$APISERVER/api/v1/namespaces/${NAMESPACE}/routes/${ROUTE} \
+    -k -v
+fi
+

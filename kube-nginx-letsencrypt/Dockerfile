@@ -6,6 +6,7 @@ RUN apk add curl
 RUN mkdir -p /etc/letsencrypt /var/log/letsencrypt
 
 COPY secret-patch-template.json /
+COPY route-patch-template.json /
 COPY entrypoint.sh /
 
 # Following two lines are for debugging purposes
