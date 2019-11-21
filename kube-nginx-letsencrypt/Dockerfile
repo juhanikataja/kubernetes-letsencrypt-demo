@@ -2,6 +2,7 @@ FROM alpine:edge
 MAINTAINER Juhani Kataja <juhani.kataja@csc.fi>
 
 RUN apk update && apk add certbot
+RUN apk add curl
 RUN mkdir -p /etc/letsencrypt /var/log/letsencrypt
 
 COPY secret-patch-template.json /

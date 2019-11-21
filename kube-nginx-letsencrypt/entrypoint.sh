@@ -15,7 +15,7 @@ NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 echo "Current Kubernetes namespce: $NAMESPACE"
 
 echo "Starting HTTP server..."
-python -m SimpleHTTPServer 8080 &
+python3 -m http.server 8080 &
 PID=$!
 
 echo "Starting certbot..."
