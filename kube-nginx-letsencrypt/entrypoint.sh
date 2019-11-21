@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [[ -z $EMAIL || -z $DOMAINS || -z $SECRET ]]; then
-	echo "EMAIL, DOMAINS, and SECRET env vars required"
+if [[ -z $EMAIL || -z $DOMAINS || -z $SECRET || -z $APISERVER ]]; then
+	echo "EMAIL, DOMAINS, SECRET, and APISERVER env vars required"
 	env
 	exit 1
 fi
@@ -51,6 +51,6 @@ curl \
   -XPATCH \
   -H "Accept: application/json, */*" \
   -H "Content-Type: application/strategic-merge-patch+json" \
-  -d @/tmp/secret-patch.json https://kubernetes/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET} \
+  -d @/tmp/secret-patch.json https://$APISERVER/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET} \
   -k -v
 echo "Done"
