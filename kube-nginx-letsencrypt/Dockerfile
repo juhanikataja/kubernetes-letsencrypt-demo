@@ -1,7 +1,7 @@
-FROM fedora:24
-MAINTAINER Seth Jennings <sethdjennings@gmail.com>
+FROM alpine:edge
+MAINTAINER Juhani Kataja <juhani.kataja@csc.fi>
 
-RUN dnf install certbot -y && dnf clean all
+RUN apk update && apk add certbot
 RUN mkdir -p /etc/letsencrypt /var/log/letsencrypt
 
 COPY secret-patch-template.json /

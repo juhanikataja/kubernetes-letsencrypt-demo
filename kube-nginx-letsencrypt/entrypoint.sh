@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [[ -z $EMAIL || -z $DOMAINS || -z $SECRET ]]; then
 	echo "EMAIL, DOMAINS, and SECRET env vars required"
@@ -17,14 +17,17 @@ echo "Current Kubernetes namespce: $NAMESPACE"
 echo "Starting HTTP server..."
 python -m SimpleHTTPServer 8080 &
 PID=$!
+
 echo "Starting certbot..."
 certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} \
   --config-dir=/tmp/cfg --logs-dir=/tmp/log --work-dir=/tmp/work
 kill $PID
+
 echo "Certbot finished. Killing http server..."
 
 echo "Finiding certs. Exiting if certs are not found ..."
-CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
+# CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
+CERTPATH=/tmp/cfg/live/$(echo $DOMAINS | cut -f1 -d',')
 ls $CERTPATH || exit 1
 
 echo "Creating update for secret..."
